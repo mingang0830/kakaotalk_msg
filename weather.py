@@ -1,5 +1,6 @@
-import os
 from bs4 import BeautifulSoup as bs
+import dotenv
+import os
 import requests
 
 from common import parse
@@ -19,6 +20,8 @@ def get_data():
 
 if __name__ == "__main__":
     data = parse(get_data())
+    
+    dotenv.load_dotenv(dotenv_path="settings.env")
     access_token = os.getenv("WEATHER_ACCESS_TOKEN")
     refresh_token = os.getenv("WEATHER_REFRESH_TOKEN")
 
@@ -26,7 +29,7 @@ if __name__ == "__main__":
 
     if status_code == 401:
         new_access_token = new_token(refresh_token, os.getenv("WEATHER_KEY"))
-        os.environ["WEATHER_ACCESS_TOKEN"] = new_access_token         
+        dotenv.set_key("settings.env", "WEATHER_ACCESS_TOKEN", new_access_token)        
         send_me_via_kakaotalk(data, new_access_token)
 
 

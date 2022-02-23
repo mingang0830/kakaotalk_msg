@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup as bs
+import dotenv
 import os
 import requests
 
@@ -25,13 +26,14 @@ if __name__ == "__main__":
     titles = parse(get_titles())
     data = rank(titles)
 
+    dotenv.load_dotenv(dotenv_path="settings.env")
     access_token = os.getenv("MOVIE_ACCESS_TOKEN")
     refresh_token = os.getenv("MOVIE_REFRESH_TOKEN")
 
     status_code = send_me_via_kakaotalk(data, access_token).status_code
 
     if status_code == 401:
-        new_access_token = new_token(refresh_token, os.getenv("WEATHER_KEY"))
-        os.environ["MOVIE_ACCESS_TOKEN"] = new_access_token         
+        new_access_token = new_token(refresh_token, os.getenv("MOVIE_KEY"))
+        dotenv.set_key("settings.env", "MOVIE_ACCESS_TOKEN", new_access_token)
         send_me_via_kakaotalk(data, new_access_token)
 
